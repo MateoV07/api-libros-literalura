@@ -17,5 +17,6 @@ public class LiteraluraApplication implements CommandLineRunner {
 		//System.out.println("Hello World");
 		Principal principal = new Principal();
 		principal.consultarDatos();
+		principal.buscarLibroPorNombre();
 	}
 }

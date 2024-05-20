@@ -1,9 +1,11 @@
 package com.aluracursos.literalura.principal;
 
 import com.aluracursos.literalura.model.Datos;
+import com.aluracursos.literalura.model.DatosLibros;
 import com.aluracursos.literalura.service.ConsumoAPI;
 import com.aluracursos.literalura.service.ConvierteDatos;
 
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Principal {
@@ -14,8 +16,26 @@ public class Principal {
 
 	public void consultarDatos(){
 		var json = consumoAPI.obtenerDatos(URL_BASE);
-		var datos = convierteDatos.obtenerDatos(json, Datos.class);
-		System.out.println(json);
-		System.out.println(datos);
+		var libros = convierteDatos.obtenerDatos(json, Datos.class);
+	}
+	public void buscarLibroPorNombre(){
+		System.out.println("Ingrese el nombre del libro que desea buscar");
+		String tituloLibro = teclado.nextLine();
+		String json = consumoAPI.obtenerDatos(URL_BASE+"?search=" +tituloLibro.replace(" ","+"));
+		Datos datosBuscados = convierteDatos.obtenerDatos(json,Datos.class);
+		Optional<DatosLibros> libroBuscado = datosBuscados.Libros().stream()
+				.filter(datosLibros -> datosLibros.titulo().toLowerCase().contains(tituloLibro.toLowerCase()))
+				.findFirst();
+		if (libroBuscado.isPresent()){
+			System.out.println("------ LIBRO ----------\n"+
+					"Título: " + libroBuscado.get().titulo() + "\n" +
+					"Autor: " + libroBuscado.get().autor().get(0).nombre() + "\n" +
+					"Idioma: "+ libroBuscado.get().idiomas().get(0)+ "\n" +
+					"Número de descargas: "+ libroBuscado.get().totalDescargas() + "\n" +
+					"----------------------------------");
+		}
+		else {
+			System.out.println("Libro no encontrado");
+		}
 	}
 }
