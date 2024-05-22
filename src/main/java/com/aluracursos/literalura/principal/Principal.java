@@ -3,6 +3,7 @@ package com.aluracursos.literalura.principal;
 import com.aluracursos.literalura.model.Datos;
 import com.aluracursos.literalura.model.DatosLibros;
 import com.aluracursos.literalura.model.Libro;
+import com.aluracursos.literalura.repository.LibroRepository;
 import com.aluracursos.literalura.service.ConsumoAPI;
 import com.aluracursos.literalura.service.ConvierteDatos;
 
@@ -14,6 +15,11 @@ public class Principal {
 	private ConsumoAPI consumoAPI = new ConsumoAPI();
 	private final String URL_BASE = "https://gutendex.com/books/";
 	private ConvierteDatos convierteDatos = new ConvierteDatos();
+	private LibroRepository repository;
+
+	public Principal(LibroRepository repository) {
+		this.repository = repository;
+	}
 
 	public void consultarDatos(){
 		var json = consumoAPI.obtenerDatos(URL_BASE);
@@ -40,7 +46,7 @@ public class Principal {
 					"Número de descargas: "+ libroBuscado.get().totalDescargas() + "\n" +
 					"----------------------------------");
 			Libro libro = new Libro(libroBuscado.get());
-			System.out.println(libro);
+			repository.save(libro);
 		}
 		else {
 			System.out.println("Libro no encontrado");

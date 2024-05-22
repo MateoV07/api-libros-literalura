@@ -15,6 +15,8 @@ public class Libro {
 	@Enumerated(EnumType.STRING)
 	private Idioma idioma;
 	private Integer totalDescargas;
+	@Transient
+	private Autor autor;
 
 	public Libro(DatosLibros datosLibros){
 		this.titulo = datosLibros.titulo();
