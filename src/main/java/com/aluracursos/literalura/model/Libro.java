@@ -1,0 +1,57 @@
+package com.aluracursos.literalura.model;
+
+import jakarta.persistence.*;
+
+import java.util.List;
+
+@Entity
+@Table(name = "libros")
+public class Libro {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long Id;
+	@Column(unique = true)
+	private String titulo;
+	@Enumerated(EnumType.STRING)
+	private Idioma idioma;
+	private Integer totalDescargas;
+
+	public Libro(DatosLibros datosLibros){
+		this.titulo = datosLibros.titulo();
+		this.idioma = Idioma.idiomaPrincipal(datosLibros.idiomas().get(0));
+		this.totalDescargas = datosLibros.totalDescargas();
+	}
+
+	public String getTitulo() {
+		return titulo;
+	}
+
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+
+	public Idioma getIdioma() {
+		return idioma;
+	}
+
+	public void setIdioma(Idioma idioma) {
+		this.idioma = idioma;
+	}
+
+	public Integer getTotalDescargas() {
+		return totalDescargas;
+	}
+
+	public void setTotalDescargas(Integer totalDescargas) {
+		this.totalDescargas = totalDescargas;
+	}
+
+	@Override
+	public String toString() {
+		return "Libro{" +
+				"titulo='" + titulo + '\'' +
+				", idioma=" + idioma +
+				", totalDescargas=" + totalDescargas +
+				'}';
+	}
+}
