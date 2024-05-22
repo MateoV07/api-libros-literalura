@@ -15,6 +15,10 @@ public class Libro {
 	@Enumerated(EnumType.STRING)
 	private Idioma idioma;
 	private Integer totalDescargas;
+	@ManyToOne
+	private Autor autor;
+
+	public Libro(){}
 
 	public Libro(DatosLibros datosLibros){
 		this.titulo = datosLibros.titulo();
@@ -46,12 +50,34 @@ public class Libro {
 		this.totalDescargas = totalDescargas;
 	}
 
+	public Autor getAutor() {
+		return autor;
+	}
+
+	public void setAutor(Autor autor) {
+		this.autor = autor;
+	}
+
+	public Long getId() {
+		return Id;
+	}
+
+	public void setId(Long id) {
+		Id = id;
+	}
+
 	@Override
 	public String toString() {
-		return "Libro{" +
-				"titulo='" + titulo + '\'' +
-				", idioma=" + idioma +
-				", totalDescargas=" + totalDescargas +
-				'}';
+
+		return "----------- LIBRO -----------------" + "\n" +
+				"Título: " + titulo + "\n" +
+				"Autor: " + autor.getNombre() + "\n" +
+				"Idioma: " + idioma + "\n" +
+				"Número de descargas: " + totalDescargas + "\n"+
+				"-----------------------------------";
+	}
+
+	public void printTitulos(){
+		System.out.println(getTitulo());
 	}
 }
