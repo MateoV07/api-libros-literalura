@@ -21,13 +21,8 @@ public class LiteraluraApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		//System.out.println("Hello World");
 		Principal principal = new Principal(libroRepository,autorRepository);
-		//principal.consultarDatos();
-		//principal.buscarLibroPorNombre();
-		//principal.mostrarLibrosbuscados();
-		//principal.mostrarAutores();
-		//principal.mostrarAutorPorAnio();
-		principal.mostrarLibrosPorIdioma();
+		principal.consultarDatos();
+		principal.mostrarMenu();
 	}
 }
