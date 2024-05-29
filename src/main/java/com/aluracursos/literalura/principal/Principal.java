@@ -1,24 +1,29 @@
 package com.aluracursos.literalura.principal;
 
-import com.aluracursos.literalura.model.Datos;
-import com.aluracursos.literalura.model.DatosLibros;
-import com.aluracursos.literalura.model.Libro;
+import com.aluracursos.literalura.model.*;
+import com.aluracursos.literalura.repository.AutorRepository;
 import com.aluracursos.literalura.repository.LibroRepository;
 import com.aluracursos.literalura.service.ConsumoAPI;
 import com.aluracursos.literalura.service.ConvierteDatos;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import org.springframework.dao.DataAccessException;
 
 public class Principal {
 	private Scanner teclado = new Scanner(System.in);
 	private ConsumoAPI consumoAPI = new ConsumoAPI();
 	private final String URL_BASE = "https://gutendex.com/books/";
 	private ConvierteDatos convierteDatos = new ConvierteDatos();
-	private LibroRepository repository;
+	private LibroRepository libroRepository;
+	private AutorRepository autorRepository;
+	private List<Libro> libros;
 
-	public Principal(LibroRepository repository) {
-		this.repository = repository;
+	public Principal(LibroRepository libroRepository, AutorRepository autorRepository) {
+		this.libroRepository = libroRepository;
+		this.autorRepository = autorRepository;
 	}
 
 	public void consultarDatos(){
@@ -36,22 +41,66 @@ public class Principal {
 		return libroBuscado;
 	}
 
-	public void buscarLibroPorNombre(){
+	public void buscarLibroPorNombre()  {
 		Optional<DatosLibros> libroBuscado = getDatosLibro();
 		if (libroBuscado.isPresent()){
-			System.out.println("----------- LIBRO -------------\n"+
-					"Título: " +libroBuscado.get().titulo() + "\n" +
-					"Autor: " + libroBuscado.get().autor().get(0).nombre() + "\n" +
-					"Idioma: "+ libroBuscado.get().idiomas().get(0)+ "\n" +
-					"Número de descargas: "+ libroBuscado.get().totalDescargas() + "\n" +
-					"----------------------------------");
+
 			Libro libro = new Libro(libroBuscado.get());
-			repository.save(libro);
+			Autor autor = new Autor(libroBuscado.get().autor().get(0));
+
+			Optional<Autor> autorBuscado = autorRepository.findByNombre(libroBuscado.get().autor().get(0).nombre());
+			if (autorBuscado.isEmpty()){
+				autorRepository.save(autor);
+				libro.setAutor(autor);
+				libroRepository.save(libro);
+				System.out.println(libro.toString());
+			} else {
+				Optional<Libro> optionalLibro = libroRepository.findByTitulo(libroBuscado.get().titulo());
+				if (optionalLibro.isPresent()){
+					System.out.println("No se puede guardar el mismo libro más de una vez");
+				}else {
+					libro.setAutor(autorBuscado.get());
+					libroRepository.save(libro);
+					System.out.println(libro.toString());
+				}
+			}
 		}
 		else {
 			System.out.println("Libro no encontrado");
 		}
 
 	}
+	public void mostrarLibrosbuscados(){
+		libros = libroRepository.findAll();
+		libros.stream()
+				.sorted(Comparator.comparing(Libro::getIdioma))
+				.forEach(System.out::println);
+	}
+
+	public void mostrarAutores(){
+		List<Autor> autores = autorRepository.findAll();
+		autores.forEach(System.out::println);
+	}
+
+	public void mostrarAutorPorAnio(){
+		System.out.println("Ingrese el año vivo de autor(es) que desea buscar");
+		int anio = teclado.nextInt();
+		List<Autor> autors = autorRepository.autoresVivosPorAnio(anio);
+		autors.forEach(System.out::println);
+	}
+
+	public void mostrarLibrosPorIdioma(){
+		System.out.println("Ingrese el idioma para buscar los libros:" + "\n" +
+				"es - español" + "\n"+
+				"en - inglés" + "\n" +
+				"fr - francés" + "\n"+
+				"pt - portugués");
+		String idioma = teclado.next();
+		Idioma idiomaElegido = Idioma.idiomaPrincipal(idioma);
+		List<Libro> librosPorIdioma = libroRepository.findByIdioma(idiomaElegido);
+		librosPorIdioma.forEach(System.out::println);
+	}
+
+
 
 }
