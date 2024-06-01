@@ -27,8 +27,8 @@ public class LiteraluraApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 
 		Principal principal = new Principal(libroRepository,autorRepository);
-		principal.consultarDatos();
 		principal.mostrarMenu();
+
 
 	}
 }
