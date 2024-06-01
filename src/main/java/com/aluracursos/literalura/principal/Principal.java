@@ -45,7 +45,6 @@ public class Principal {
 			System.out.println(menu);
 			opcion = teclado.nextInt();
 			teclado.nextLine();
-
 			switch (opcion) {
 				case 1:
 					buscarLibroPorNombre();
@@ -126,7 +125,7 @@ public class Principal {
 	public void mostrarAutorPorAnio(){
 		System.out.println("Ingrese el año vivo de autor(es) que desea buscar");
 		int anio = teclado.nextInt();
-		teclado.nextLine();
+    teclado.nextLine();
 		List<Autor> autors = autorRepository.autoresVivosPorAnio(anio);
 		autors.forEach(System.out::println);
 	}
@@ -143,7 +142,5 @@ public class Principal {
 		List<Libro> librosPorIdioma = libroRepository.findByIdioma(idiomaElegido);
 		librosPorIdioma.forEach(System.out::println);
 	}
-
-
 
 }
