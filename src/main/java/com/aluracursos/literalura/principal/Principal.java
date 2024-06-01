@@ -44,6 +44,7 @@ public class Principal {
                     """;
 			System.out.println(menu);
 			opcion = teclado.nextInt();
+			teclado.nextLine();
 			switch (opcion) {
 				case 1:
 					buscarLibroPorNombre();
@@ -70,7 +71,8 @@ public class Principal {
 	}
 	public Optional<DatosLibros> getDatosLibro(){
 		System.out.println("Ingrese el nombre del libro que desea buscar");
-		String tituloLibro = teclado.nextLine();
+		String tituloLibro = teclado.next();
+		teclado.nextLine();
 		String json = consumoAPI.obtenerDatos(URL_BASE+"?search=" +tituloLibro.replace(" ","+"));
 		Datos datosBuscados = convierteDatos.obtenerDatos(json,Datos.class);
 		Optional<DatosLibros> libroBuscado = datosBuscados.Libros().stream()
@@ -123,6 +125,7 @@ public class Principal {
 	public void mostrarAutorPorAnio(){
 		System.out.println("Ingrese el año vivo de autor(es) que desea buscar");
 		int anio = teclado.nextInt();
+    teclado.nextLine();
 		List<Autor> autors = autorRepository.autoresVivosPorAnio(anio);
 		autors.forEach(System.out::println);
 	}
@@ -134,11 +137,10 @@ public class Principal {
 				"fr - francés" + "\n"+
 				"pt - portugués");
 		String idioma = teclado.next();
+		teclado.nextLine();
 		Idioma idiomaElegido = Idioma.idiomaPrincipal(idioma);
 		List<Libro> librosPorIdioma = libroRepository.findByIdioma(idiomaElegido);
 		librosPorIdioma.forEach(System.out::println);
 	}
-
-
 
 }
